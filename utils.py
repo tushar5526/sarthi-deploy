@@ -39,7 +39,10 @@ def _generate_bearer_token(secret) -> str:
 
 
 def deploy(project_git_url, branch, sarthi_secret, sarthi_server_url):
-    headers = {"Authorization": f"Bearer {_generate_bearer_token(sarthi_secret)}"}
+    headers = {
+        "Authorization": f"Bearer {_generate_bearer_token(sarthi_secret)}",
+        'Content-Type': 'application/json'
+    }
     body = {
         "project_git_url": project_git_url,
         "branch": branch,
