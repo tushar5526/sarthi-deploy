@@ -8,7 +8,8 @@ Pre-requisites 🛠️
 1. This action is meant to be used in parallel with a self-hosted [Sarthi]() service.
 2. Get the secrets generate from that service and add it to the repository's secret. See [creating-secrets-for-a-repository](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) by GitHub.
 
-### Usage
+Usage 🔄
+-------
 ```yml
 
 name: Sarthi Preview Environments
@@ -33,5 +34,5 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 ```
 
-### License
+### License 📄
 This action is licensed under some specific terms. Check [here](LICENSE) for more information.
