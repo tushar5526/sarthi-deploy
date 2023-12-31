@@ -23,6 +23,7 @@ def main() -> None:
 
     if event_name != "pull_request":
         print(service_urls)
+        return
 
     comment = ""
     for urls in service_urls:
