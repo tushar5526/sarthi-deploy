@@ -1,4 +1,5 @@
 import os
+
 from utils import comment_on_gh_pr, deploy
 
 
@@ -19,10 +20,14 @@ def main() -> None:
         sarthi_secret=sarthi_secret,
         sarthi_server_url=sarthi_server_url,
     )
+
+    if event_name != "pull_request":
+        return
+
     comment = ""
     for urls in service_urls:
         comment += urls + "\n"
-    comment_on_gh_pr(f"Hello From Sarthi!!!!\n" + comment)
+    comment_on_gh_pr(f"Deployed service URLs\n" + comment)
 
 
 if __name__ == "__main__":

@@ -41,14 +41,14 @@ def _generate_bearer_token(secret) -> str:
 def deploy(project_git_url, branch, sarthi_secret, sarthi_server_url):
     headers = {
         "Authorization": f"Bearer {_generate_bearer_token(sarthi_secret)}",
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
     }
     body = {
         "project_git_url": project_git_url,
         "branch": branch,
     }
     response = requests.post(
-        url=f'{sarthi_server_url}/deploy', headers=headers, data=json.dumps(body)
+        url=f"{sarthi_server_url}/deploy", headers=headers, data=json.dumps(body)
     )
     response.raise_for_status()
     service_urls = response.json()
