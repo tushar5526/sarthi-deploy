@@ -45,7 +45,7 @@ def deploy(project_git_url, branch, sarthi_secret, sarthi_server_url):
         "branch": branch,
     }
     response = requests.post(
-        url=sarthi_server_url, headers=headers, data=json.dumps(body)
+        url=f'{sarthi_server_url}/deploy', headers=headers, data=json.dumps(body)
     )
     response.raise_for_status()
     service_urls = response.json()
