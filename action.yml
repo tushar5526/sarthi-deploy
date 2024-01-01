@@ -26,3 +26,6 @@ inputs:
   GITHUB_TOKEN:
     description: 'Github token of the repository (automatically created by Github)'
     default: ${{ github.token }}
+  github_event:
+    description: 'Complete GitHub event'
+    default: ${{ github.event }}
