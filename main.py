@@ -1,11 +1,13 @@
-import os
+import os, json
 
 from utils import comment_on_gh_pr, deploy
 
 
 def main() -> None:
     event_name = os.environ.get("GITHUB_EVENT_NAME")
-    print(os.environ.get('INPUT_FORK_REPO_URL'))
+    with open(os.environ.get("GITHUB_EVENT_PATH")) as file:
+        data = json.load(file)
+    print(data)
     project_url = f"https://github.com/{os.environ.get('INPUT_FORK_REPO_URL') or os.environ.get('GITHUB_REPOSITORY')}.git"
     branch_name = (
         os.environ.get("GITHUB_HEAD_REF")

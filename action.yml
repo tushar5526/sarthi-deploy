@@ -22,7 +22,7 @@ inputs:
     description: Secret text for authentication
   fork_repo_url:
     description: 'GitHub URL of Head Repo when a PR is created, default empty for push events'
-    default: ${{ github.event }}
+    default: ${{ github.event.pull_request.head.repo.full_name }}
   GITHUB_TOKEN:
     description: 'Github token of the repository (automatically created by Github)'
     default: ${{ github.token }}
