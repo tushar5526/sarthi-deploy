@@ -14,7 +14,6 @@ def _get_event_payload():
 
 class GitHubHelper:
     event_payload = _get_event_payload()
-    project_url = f"https://github.com/{event_payload['pull_request']['head']['repo']['full_name'] or os.environ.get('GITHUB_REPOSITORY')}.git"
     event_name = os.environ.get("GITHUB_EVENT_NAME")
     branch_name = (
         os.environ.get("GITHUB_HEAD_REF")
@@ -22,6 +21,15 @@ class GitHubHelper:
         else os.environ.get("GITHUB_REF_NAME")
     )
     github_token = os.environ.get("INPUT_GITHUB_TOKEN")
+
+    @staticmethod
+    def get_project_url():
+        repo_name = (
+            GitHubHelper.event_payload["pull_request"]["head"]["repo"]["full_name"]
+            if GitHubHelper.event_name == "pull_request"
+            else os.environ.get("GITHUB_REPOSITORY")
+        )
+        return f"https://github.com/{repo_name}.git"
 
     @staticmethod
     def comment_on_gh_pr(comment):
@@ -101,7 +109,7 @@ class SarthiHelper:
 
 def handle_push_events():
     service_urls = SarthiHelper.deploy_preview(
-        GitHubHelper.project_url,
+        GitHubHelper.get_project_url(),
         GitHubHelper.branch_name,
     )
     print("Services Deployed Successfully ✅")
@@ -112,7 +120,7 @@ def handle_pr_events():
     action = GitHubHelper.event_payload["action"]
     if action == "opened":
         services_urls = SarthiHelper.deploy_preview(
-            GitHubHelper.project_url,
+            GitHubHelper.get_project_url(),
             GitHubHelper.branch_name,
         )
         GitHubHelper.comment_on_gh_pr(
@@ -120,11 +128,11 @@ def handle_pr_events():
         )
     elif action == "closed":
         SarthiHelper.delete_preview(
-            GitHubHelper.project_url,
+            GitHubHelper.get_project_url(),
             GitHubHelper.branch_name,
         )
         print(
-            f"Deleted ephemeral / preview environment for {GitHubHelper.project_url}/{GitHubHelper.branch_name}"
+            f"Deleted ephemeral / preview environment for {GitHubHelper.get_project_url()}/{GitHubHelper.branch_name}"
         )
     else:
         raise ValueError("Unknown action type detected")

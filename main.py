@@ -1,7 +1,11 @@
 import os
 
-from utils import (GitHubHelper, handle_delete_events, handle_pr_events,
-                   handle_push_events)
+from utils import (
+    GitHubHelper,
+    handle_delete_events,
+    handle_pr_events,
+    handle_push_events,
+)
 
 
 def main() -> None:
