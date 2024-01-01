@@ -6,50 +6,129 @@ import jwt
 import requests
 
 
-def comment_on_gh_pr(comment):
-    github_api_url = os.environ.get("GITHUB_API_URL")
-    github_token = os.environ.get("INPUT_GITHUB_TOKEN")
-    if not github_token:
-        raise Exception("INVALID GITHUB TOKEN _ EMPTY")
-    pr_number = os.environ.get("GITHUB_REF_NAME").split("/")[0]
-
-    url = f"{github_api_url}/repos/{os.environ.get('GITHUB_REPOSITORY')}/issues/{pr_number}/comments"
-
-    headers = {
-        "Authorization": f"Bearer {github_token}",
-        "X-GitHub-Api-Version": "2022-11-28",
-        "Accept": "application/vnd.github+json",
-    }
-
-    data = {"body": comment}
-    response = requests.post(url, headers=headers, json=data)
-    response.raise_for_status()
+def _get_event_payload():
+    with open(os.environ.get("GITHUB_EVENT_PATH")) as file:
+        event_payload = json.load(file)
+    return event_payload
 
 
-def _generate_bearer_token(secret) -> str:
-    payload = {
-        "sub": "sarthi",
-        "iat": datetime.datetime.utcnow(),  # Issued at time
-        "exp": datetime.datetime.utcnow()
-        + datetime.timedelta(minutes=1),  # Expiration time
-    }
-
-    token = jwt.encode(payload, secret, algorithm="HS256")
-    return token
-
-
-def deploy(project_git_url, branch, sarthi_secret, sarthi_server_url):
-    headers = {
-        "Authorization": f"Bearer {_generate_bearer_token(sarthi_secret)}",
-        "Content-Type": "application/json",
-    }
-    body = {
-        "project_git_url": project_git_url,
-        "branch": branch,
-    }
-    response = requests.post(
-        url=f"{sarthi_server_url}/deploy", headers=headers, data=json.dumps(body)
+class GitHubHelper:
+    event_payload = _get_event_payload()
+    project_url = f"https://github.com/{event_payload['pull_request']['head']['repo']['full_name'] or os.environ.get('GITHUB_REPOSITORY')}.git"
+    event_name = os.environ.get("GITHUB_EVENT_NAME")
+    branch_name = (
+        os.environ.get("GITHUB_HEAD_REF")
+        if event_name == "pull_request"
+        else os.environ.get("GITHUB_REF_NAME")
     )
-    response.raise_for_status()
-    service_urls = response.json()
-    return service_urls
+    github_token = os.environ.get("INPUT_GITHUB_TOKEN")
+
+    @staticmethod
+    def comment_on_gh_pr(comment):
+        github_api_url = os.environ.get("GITHUB_API_URL")
+        github_token = os.environ.get("INPUT_GITHUB_TOKEN")
+        if not github_token:
+            raise Exception("INVALID GITHUB TOKEN _ EMPTY")
+        pr_number = os.environ.get("GITHUB_REF_NAME").split("/")[0]
+
+        url = f"{github_api_url}/repos/{os.environ.get('GITHUB_REPOSITORY')}/issues/{pr_number}/comments"
+
+        headers = {
+            "Authorization": f"Bearer {github_token}",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "Accept": "application/vnd.github+json",
+        }
+
+        data = {"body": comment}
+        response = requests.post(url, headers=headers, json=data)
+        response.raise_for_status()
+
+
+class SarthiHelper:
+    _sarthi_secret = os.environ.get("INPUT_SARTHI_SECRET")
+    _sarthi_server_url = os.environ.get("INPUT_SARTHI_SERVER_URL")
+
+    @staticmethod
+    def _get_headers():
+        return {
+            "Authorization": f"Bearer {SarthiHelper._generate_bearer_token(SarthiHelper._sarthi_secret)}",
+            "Content-Type": "application/json",
+        }
+
+    @staticmethod
+    def _generate_bearer_token(secret) -> str:
+        payload = {
+            "sub": "sarthi",
+            "iat": datetime.datetime.utcnow(),  # Issued at time
+            "exp": datetime.datetime.utcnow()
+            + datetime.timedelta(minutes=1),  # Expiration time
+        }
+
+        token = jwt.encode(payload, secret, algorithm="HS256")
+        return token
+
+    @staticmethod
+    def deploy_preview(project_git_url, branch):
+        body = {
+            "project_git_url": project_git_url,
+            "branch": branch,
+        }
+        response = requests.post(
+            url=f"{SarthiHelper._sarthi_server_url}/deploy",
+            headers=SarthiHelper._get_headers(),
+            data=json.dumps(body),
+        )
+        response.raise_for_status()
+        service_urls = response.json()
+        return service_urls
+
+    @staticmethod
+    def delete_preview(project_git_url, branch):
+        body = {
+            "project_git_url": project_git_url,
+            "branch": branch,
+        }
+        response = requests.delete(
+            url=f"{SarthiHelper._sarthi_server_url}/deploy",
+            headers=SarthiHelper._get_headers(),
+            data=json.dumps(body),
+        )
+        response.raise_for_status()
+        service_urls = response.json()
+        return service_urls
+        pass
+
+
+def handle_push_events():
+    service_urls = SarthiHelper.deploy_preview(
+        GitHubHelper.project_url,
+        GitHubHelper.branch_name,
+    )
+    print("Services Deployed Successfully ✅")
+    print(service_urls)
+
+
+def handle_pr_events():
+    action = GitHubHelper.event_payload["action"]
+    if action == "opened":
+        services_urls = SarthiHelper.deploy_preview(
+            GitHubHelper.project_url,
+            GitHubHelper.branch_name,
+        )
+        GitHubHelper.comment_on_gh_pr(
+            f"Deployed Services Successfully ✅\n{','.join(services_urls)}"
+        )
+    elif action == "closed":
+        SarthiHelper.delete_preview(
+            GitHubHelper.project_url,
+            GitHubHelper.branch_name,
+        )
+        print(
+            f"Deleted ephemeral / preview environment for {GitHubHelper.project_url}/{GitHubHelper.branch_name}"
+        )
+    else:
+        raise ValueError("Unknown action type detected")
+
+
+def handle_delete_events():
+    pass
