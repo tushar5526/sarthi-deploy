@@ -5,8 +5,7 @@ from utils import comment_on_gh_pr, deploy
 
 def main() -> None:
     event_name = os.environ.get("GITHUB_EVENT_NAME")
-    github_event = os.environ.get("INPUT_GITHUB_EVENT")
-    print(github_event)
+    print(os.environ.get('INPUT_FORK_REPO_URL'))
     project_url = f"https://github.com/{os.environ.get('INPUT_FORK_REPO_URL') or os.environ.get('GITHUB_REPOSITORY')}.git"
     branch_name = (
         os.environ.get("GITHUB_HEAD_REF")
