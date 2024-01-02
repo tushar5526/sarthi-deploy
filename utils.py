@@ -21,6 +21,8 @@ class GitHubHelper:
         else os.environ.get("GITHUB_REF_NAME")
     )
     github_token = os.environ.get("INPUT_GITHUB_TOKEN")
+    github_api_url = os.environ.get("GITHUB_API_URL")
+    github_base_repository = os.environ.get('GITHUB_REPOSITORY')
 
     @staticmethod
     def get_project_url():
@@ -33,22 +35,23 @@ class GitHubHelper:
 
     @staticmethod
     def comment_on_gh_pr(comment):
-        github_api_url = os.environ.get("GITHUB_API_URL")
-        github_token = os.environ.get("INPUT_GITHUB_TOKEN")
-        if not github_token:
+        if not GitHubHelper.github_token:
             raise Exception("INVALID GITHUB TOKEN _ EMPTY")
         pr_number = os.environ.get("GITHUB_REF_NAME").split("/")[0]
 
-        url = f"{github_api_url}/repos/{os.environ.get('GITHUB_REPOSITORY')}/issues/{pr_number}/comments"
+        url = f"{GitHubHelper.github_api_url}/repos/{GitHubHelper.github_base_repository}/issues/{pr_number}/comments"
 
         headers = {
-            "Authorization": f"Bearer {github_token}",
+            "Authorization": f"Bearer {GitHubHelper.github_token}",
             "X-GitHub-Api-Version": "2022-11-28",
             "Accept": "application/vnd.github+json",
         }
-
         data = {"body": comment}
-        response = requests.post(url, headers=headers, json=data)
+
+        print("headers", headers)
+        print("body", data)
+        print('url', url)
+        response = requests.post(url, headers=headers, data=data)
         response.raise_for_status()
 
 
