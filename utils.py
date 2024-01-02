@@ -51,7 +51,7 @@ class GitHubHelper:
         print("headers", headers)
         print("body", data)
         print('url', url)
-        response = requests.post(url, headers=headers, data=data)
+        response = requests.post(url, headers=headers, json=data)
         print(response.text)
         response.raise_for_status()
 
