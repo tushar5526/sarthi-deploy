@@ -1,34 +1,24 @@
 import os
 
-from utils import comment_on_gh_pr, deploy
+from utils import (
+    GitHubHelper,
+    handle_delete_events,
+    handle_pr_events,
+    handle_push_events,
+)
 
 
 def main() -> None:
-    event_name = os.environ.get("GITHUB_EVENT_NAME")
-    project_url = f"https://github.com/{os.environ.get('INPUT_FORK_REPO_URL') or os.environ.get('GITHUB_REPOSITORY')}.git"
-    branch_name = (
-        os.environ.get("GITHUB_HEAD_REF")
-        if event_name == "pull_request"
-        else os.environ.get("GITHUB_REF_NAME")
-    )
-    sarthi_secret = os.environ.get("INPUT_SARTHI_SECRET")
-    sarthi_server_url = os.environ.get("INPUT_SARTHI_SERVER_URL")
+    event_name = GitHubHelper.event_name
 
-    service_urls = deploy(
-        project_git_url=project_url,
-        branch=branch_name,
-        sarthi_secret=sarthi_secret,
-        sarthi_server_url=sarthi_server_url,
-    )
-
-    if event_name != "pull_request":
-        print(service_urls)
-        return
-
-    comment = ""
-    for urls in service_urls:
-        comment += urls + "\n"
-    comment_on_gh_pr(f"Deployed service URLs\n" + comment)
+    if event_name in ["pull_request", "pull_request_target"]:
+        handle_pr_events()
+    elif event_name == "push":
+        handle_push_events()
+    elif event_name == "delete":
+        handle_delete_events()
+    else:
+        raise ValueError(f"Unsupported event type {event_name}")
 
 
 if __name__ == "__main__":
