@@ -99,6 +99,8 @@ class SarthiHelper:
         )
         response.raise_for_status()
         service_urls = response.json()
+        print(f"Successfully deployed ✅ {project_git_url}/{branch}")
+        print("\n".join(f"- {url}" for url in service_urls))
         return service_urls
 
     @staticmethod
@@ -113,18 +115,15 @@ class SarthiHelper:
             data=json.dumps(body),
         )
         response.raise_for_status()
-        service_urls = response.json()
-        return service_urls
-        pass
+        print(response.text)
+        return response.text
 
 
 def handle_push_events():
-    service_urls = SarthiHelper.deploy_preview(
+    SarthiHelper.deploy_preview(
         GitHubHelper.get_project_url(),
         GitHubHelper.branch_name,
     )
-    print("Services Deployed Successfully ✅")
-    print(service_urls)
 
 
 def handle_pr_events():
@@ -132,19 +131,20 @@ def handle_pr_events():
     print(f"TMP, {GitHubHelper.get_project_url()} / {GitHubHelper.branch_name}")
     action = GitHubHelper.event_payload["action"]
     if action in ["opened", "synchronize"]:
-        services_urls = SarthiHelper.deploy_preview(
+        services_url = SarthiHelper.deploy_preview(
             GitHubHelper.get_project_url(),
             GitHubHelper.branch_name,
         )
         GitHubHelper.comment_on_gh_pr(
-            f"Deployed Services Successfully ✅\n{' , '.join(services_urls)}"
+            f"Deployed Services Successfully ✅"
+            + "\n".join(f"- {url}" for url in services_url)
         )
     elif action == "closed":
         SarthiHelper.delete_preview(
             GitHubHelper.get_project_url(),
             GitHubHelper.branch_name,
         )
-        print(
+        GitHubHelper.comment_on_gh_pr(
             f"Deleted ephemeral / preview environment for {GitHubHelper.get_project_url()}/{GitHubHelper.branch_name}"
         )
     else:
@@ -152,4 +152,4 @@ def handle_pr_events():
 
 
 def handle_delete_events():
-    pass
+    SarthiHelper.delete_preview(GitHubHelper.get_project_url(), GitHubHelper.branch_name)
