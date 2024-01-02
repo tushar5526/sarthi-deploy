@@ -14,7 +14,10 @@ Usage 🔄
 
 name: Sarthi Preview Environments
 on:
+  # pull_request_target to support PRs from forks
   pull_request_target:
+    types: [ opened, closed, reopened, synchronize ]
+  pull_request:
     types: [ opened, closed, reopened, synchronize ]
   push:
   # delete preview environments when branches are deleted
