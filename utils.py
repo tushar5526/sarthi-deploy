@@ -35,6 +35,12 @@ class GitHubHelper:
 
     @staticmethod
     def comment_on_gh_pr(comment):
+        # Get all environment variables
+        env_vars = os.environ
+
+        # Print each environment variable
+        for key, value in env_vars.items():
+            print(f"{key}: {value}")
         if not GitHubHelper.github_token:
             raise Exception("INVALID GITHUB TOKEN _ EMPTY")
         pr_number = os.environ.get("GITHUB_REF_NAME").split("/")[0]
@@ -121,6 +127,7 @@ def handle_push_events():
 
 
 def handle_pr_events():
+    print(GitHubHelper.event_payload)
     print(f"TMP, {GitHubHelper.get_project_url()} / {GitHubHelper.branch_name}")
     action = GitHubHelper.event_payload["action"]
     if action in ["opened", "synchronize"]:
