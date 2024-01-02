@@ -22,5 +22,5 @@ inputs:
     description: Secret text for authentication
   GITHUB_TOKEN:
     description: 'Github token of the repository (automatically created by Github)'
-    default: ${{ github.token }}
+    default: ${{ secrets.GITHUB_TOKEN }}
 
