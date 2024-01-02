@@ -46,9 +46,8 @@ class GitHubHelper:
             "Accept": "application/vnd.github+json",
         }
 
-        comment_identifier_keyword = (
-            f"Sarthi Deployment Status {SarthiHelper.get_unique_code()}"
-        )
+        comment_identifier_keyword = f"Sarthi Deployment Status {SarthiHelper.get_unique_code()}"
+
         comment_id = None
 
         # List current comments on PR
@@ -57,12 +56,12 @@ class GitHubHelper:
         response.raise_for_status()
         comment_list = response.json()
 
-        for comment in comment_list:
+        for github_comment in comment_list:
             if (
-                "bot" in comment["user"]["login"]
-                and comment_identifier_keyword in comment["body"]
+                "bot" in github_comment["user"]["login"]
+                and comment_identifier_keyword in github_comment["body"]
             ):
-                comment_id = comment["id"]
+                comment_id = github_comment["id"]
                 break
 
         if comment_id:
