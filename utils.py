@@ -122,7 +122,7 @@ def handle_push_events():
 
 def handle_pr_events():
     action = GitHubHelper.event_payload["action"]
-    if action == "opened":
+    if action in ["opened", "synchronize"]:
         services_urls = SarthiHelper.deploy_preview(
             GitHubHelper.get_project_url(),
             GitHubHelper.branch_name,
@@ -139,7 +139,7 @@ def handle_pr_events():
             f"Deleted ephemeral / preview environment for {GitHubHelper.get_project_url()}/{GitHubHelper.branch_name}"
         )
     else:
-        raise ValueError("Unknown action type detected")
+        raise ValueError(f"Unknown action type detected {action}")
 
 
 def handle_delete_events():
