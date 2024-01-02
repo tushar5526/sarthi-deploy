@@ -121,6 +121,7 @@ def handle_push_events():
 
 
 def handle_pr_events():
+    print(f"TMP, {GitHubHelper.get_project_url()} / {GitHubHelper.branch_name}")
     action = GitHubHelper.event_payload["action"]
     if action in ["opened", "synchronize"]:
         services_urls = SarthiHelper.deploy_preview(
