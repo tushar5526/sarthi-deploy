@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import typing
 
 import jwt
 import requests
@@ -22,7 +23,8 @@ class GitHubHelper:
     )
     github_token = os.environ.get("INPUT_REPO_TOKEN")
     github_api_url = os.environ.get("GITHUB_API_URL")
-    github_base_repository = os.environ.get('GITHUB_REPOSITORY')
+    github_base_repository = os.environ.get("GITHUB_REPOSITORY")
+    pr_number = event_payload.get("number", "-1")
 
     @staticmethod
     def get_project_url():
@@ -43,9 +45,8 @@ class GitHubHelper:
             print(f"{key}: {value}")
         if not GitHubHelper.github_token:
             raise Exception("INVALID GITHUB TOKEN _ EMPTY")
-        pr_number = os.environ.get("GITHUB_REF_NAME").split("/")[0]
 
-        url = f"{GitHubHelper.github_api_url}/repos/{GitHubHelper.github_base_repository}/issues/{pr_number}/comments"
+        url = f"{GitHubHelper.github_api_url}/repos/{GitHubHelper.github_base_repository}/issues/{GitHubHelper.pr_number}/comments"
 
         headers = {
             "Authorization": f"Bearer {GitHubHelper.github_token}",
@@ -56,7 +57,7 @@ class GitHubHelper:
 
         print("headers", headers)
         print("body", data)
-        print('url', url)
+        print("url", url)
         response = requests.post(url, headers=headers, json=data)
         print(response.text)
         response.raise_for_status()
