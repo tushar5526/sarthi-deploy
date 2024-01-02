@@ -11,14 +11,14 @@ from utils import (
 def main() -> None:
     event_name = GitHubHelper.event_name
 
-    if event_name == "pull_request":
+    if event_name in ["pull_request", "pull_request_target"]:
         handle_pr_events()
     elif event_name == "push":
         handle_push_events()
     elif event_name == "delete":
         handle_delete_events()
     else:
-        raise ValueError("‼️Unsupported event types")
+        raise ValueError(f"Unsupported event type {event_name}")
 
 
 if __name__ == "__main__":
