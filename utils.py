@@ -20,7 +20,7 @@ class GitHubHelper:
         if event_name == "pull_request"
         else os.environ.get("GITHUB_REF_NAME")
     )
-    github_token = os.environ.get("INPUT_GITHUB_TOKEN")
+    github_token = os.environ.get("INPUT_REPO_TOKEN")
     github_api_url = os.environ.get("GITHUB_API_URL")
     github_base_repository = os.environ.get('GITHUB_REPOSITORY')
 
