@@ -130,7 +130,7 @@ def handle_pr_events():
     print(GitHubHelper.event_payload)
     print(f"TMP, {GitHubHelper.get_project_url()} / {GitHubHelper.branch_name}")
     action = GitHubHelper.event_payload["action"]
-    if action in ["opened", "synchronize"]:
+    if action in ["opened", "synchronize", "reopened"]:
         services_url = SarthiHelper.deploy_preview(
             GitHubHelper.get_project_url(),
             GitHubHelper.branch_name,
