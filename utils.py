@@ -128,7 +128,7 @@ def handle_pr_events():
             GitHubHelper.branch_name,
         )
         GitHubHelper.comment_on_gh_pr(
-            f"Deployed Services Successfully ✅\n{','.join(services_urls)}"
+            f"Deployed Services Successfully ✅\n{' , '.join(services_urls)}"
         )
     elif action == "closed":
         SarthiHelper.delete_preview(
