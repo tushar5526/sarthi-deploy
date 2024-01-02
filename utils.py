@@ -136,7 +136,7 @@ def handle_pr_events():
             GitHubHelper.branch_name,
         )
         GitHubHelper.comment_on_gh_pr(
-            f"Deployed Services Successfully ✅"
+            f"Deployed Services Successfully ✅\n"
             + "\n".join(f"- {url}" for url in services_url)
         )
     elif action == "closed":
