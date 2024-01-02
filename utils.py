@@ -18,7 +18,7 @@ class GitHubHelper:
     event_name = os.environ.get("GITHUB_EVENT_NAME")
     branch_name = (
         os.environ.get("GITHUB_HEAD_REF")
-        if event_name == "pull_request"
+        if event_name in ["pull_request", "pull_request_target"]
         else os.environ.get("GITHUB_REF_NAME")
     )
     github_token = os.environ.get("INPUT_REPO_TOKEN")
@@ -30,7 +30,7 @@ class GitHubHelper:
     def get_project_url():
         repo_name = (
             GitHubHelper.event_payload["pull_request"]["head"]["repo"]["full_name"]
-            if GitHubHelper.event_name == "pull_request"
+            if GitHubHelper.event_name in ["pull_request", "pull_request_target"]
             else os.environ.get("GITHUB_REPOSITORY")
         )
         return f"https://github.com/{repo_name}.git"
