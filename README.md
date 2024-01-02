@@ -14,8 +14,11 @@ Usage 🔄
 
 name: Sarthi Preview Environments
 on:
-  pull_request:
+  pull_request_target:
+    types: [ opened, closed, reopened, synchronize ]
   push:
+  # delete preview environments when branches are deleted
+  delete:
 
 jobs:
   sarthi_job:
@@ -28,10 +31,9 @@ jobs:
         uses: tushar5526/sarthi-deploy@main
         with:
           compose_file: docker-compose.yml # override this with the compose file name
-          sarthi_server_url: ${{ secrets.SARTHI_SERVER_URL }} 
+          sarthi_server_url: ${{ secrets.SARTHI_SERVER_URL }}
           sarthi_secret: ${{ secrets.SARTHI_SECRET }} # Secret text generate while setting up the server
-          fork_repo_url: ${{ github.event.pull_request.head.repo.full_name }}
-          GITHUB_TOKEN: ${{ github.token }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### License 📄
