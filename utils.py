@@ -30,6 +30,8 @@ class GitHubHelper:
         if event_name in ["pull_request", "pull_request_target"]
         else os.environ.get("GITHUB_REPOSITORY")
     )
+    compose_file_location = os.environ.get("INPUT_COMPOSE_FILE")
+
 
     @staticmethod
     def get_project_url():
@@ -108,6 +110,7 @@ class SarthiHelper:
         body = {
             "project_git_url": project_git_url,
             "branch": branch,
+            "compose_file_location": GitHubHelper.compose_file_location
         }
         response = requests.post(
             url=f"{SarthiHelper._sarthi_server_url}/deploy",
