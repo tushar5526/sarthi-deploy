@@ -1,6 +1,6 @@
 ## Sarthi Deploy <img alt="action-badge" src="https://img.shields.io/badge/Sarthi-white?logo=github-actions&label=GitHub%20Action&labelColor=white&color=0064D7"> <a href="https://github.com/lnxpy/cookiecutter-pyaction"><img alt="cookiecutter-pyaction" src="https://img.shields.io/badge/cookiecutter--pyaction-white?logo=cookiecutter&label=Made%20with&labelColor=white&color=0064D7"></a>
 
-Easy to setup Docker based Ephemeral previews!
+Easy to set up Docker Compose based Ephemeral previews!
 
 Pre-requisites 🛠️
 -----------------
@@ -33,9 +33,9 @@ jobs:
       - name: Set up Sarthi
         uses: tushar5526/sarthi-deploy@main
         with:
-          compose_file: docker-compose.yml # override this with the compose file name
-          sarthi_server_url: ${{ secrets.SARTHI_SERVER_URL }}
-          sarthi_secret: ${{ secrets.SARTHI_SECRET }} # Secret text generate while setting up the server
+          compose_file: docker-compose.yml # override this with the compose file location in your project
+          sarthi_server_url: ${{ secrets.SARTHI_SERVER_URL }} # Sarthi API Backend URL prompted after running the installation script
+          sarthi_secret: ${{ secrets.SARTHI_SECRET }} # Secret text generated while setting up the server
 ```
 
 ### License 📄
