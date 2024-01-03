@@ -36,7 +36,6 @@ jobs:
           compose_file: docker-compose.yml # override this with the compose file name
           sarthi_server_url: ${{ secrets.SARTHI_SERVER_URL }}
           sarthi_secret: ${{ secrets.SARTHI_SECRET }} # Secret text generate while setting up the server
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### License 📄
