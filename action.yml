@@ -21,6 +21,6 @@ inputs:
     required: true
     description: Secret text for authentication
   repo_token:
-    required: true
+    default: ${{ github.token }}
     description: 'Github token of the repository (automatically created by Github)'
 
