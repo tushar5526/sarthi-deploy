@@ -5,7 +5,7 @@ Easy to set up Docker Compose based Ephemeral previews!
 Pre-requisites 🛠️
 -----------------
 
-1. This action is meant to be used in parallel with a self-hosted [Sarthi]() service.
+1. This action is meant to be used in parallel with a self-hosted [Sarthi](https://github.com/tushar5526/sarthi) service.
 2. Get the secrets generate from that service and add it to the repository's secret. See [creating-secrets-for-a-repository](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) by GitHub.
 
 Usage 🔄
