@@ -22,7 +22,7 @@ class GitHubHelper:
         else os.environ.get("GITHUB_REF_NAME")
     )
     github_token = os.environ.get("INPUT_REPO_TOKEN")
-    gh_repo_rw_token = os.environ.get("GITHUB_REPO_RW_TOKEN")
+    gh_repo_rw_token = os.environ.get("GH_REPO_RW_TOKEN")
     github_api_url = os.environ.get("GITHUB_API_URL")
     github_base_repository = os.environ.get("GITHUB_REPOSITORY")
     pr_number = event_payload.get("number", "-1")
@@ -145,7 +145,7 @@ def handle_push_events():
     SarthiHelper.deploy_preview(
         GitHubHelper.get_project_url(),
         GitHubHelper.branch_name,
-        GitHubHelper.github_token
+        GitHubHelper.gh_repo_rw_token
     )
 
 
