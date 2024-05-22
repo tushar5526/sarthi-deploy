@@ -20,6 +20,9 @@ inputs:
   sarthi_secret:
     required: true
     description: Secret text for authentication
+  gh_repo_rw_token:
+    required: false
+    description: GitHub RW token for private repos
   repo_token:
     default: ${{ github.token }}
     description: 'Github token of the repository (automatically created by Github)'
