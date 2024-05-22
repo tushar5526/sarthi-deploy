@@ -33,7 +33,6 @@ class GitHubHelper:
     )
     compose_file_location = os.environ.get("INPUT_COMPOSE_FILE")
 
-
     @staticmethod
     def get_project_url():
         return f"https://github.com/{GitHubHelper.repo_name}.git"
@@ -61,8 +60,8 @@ class GitHubHelper:
 
         for github_comment in comment_list:
             if (
-                "bot" in github_comment["user"]["login"]
-                and comment_identifier_keyword in github_comment["body"]
+                    "bot" in github_comment["user"]["login"]
+                    and comment_identifier_keyword in github_comment["body"]
             ):
                 comment_id = github_comment["id"]
                 break
@@ -96,7 +95,7 @@ class SarthiHelper:
             "sub": "sarthi",
             "iat": datetime.datetime.utcnow(),  # Issued at time
             "exp": datetime.datetime.utcnow()
-            + datetime.timedelta(minutes=1),  # Expiration time
+                   + datetime.timedelta(minutes=1),  # Expiration time
         }
 
         token = jwt.encode(payload, secret, algorithm="HS256")
@@ -131,7 +130,7 @@ class SarthiHelper:
         return service_urls
 
     @staticmethod
-    def delete_preview(project_git_url, branch, compose_file_location, gh_token):
+    def delete_preview(project_git_url, branch, compose_file_location, gh_token=None):
         body = {
             "project_git_url": project_git_url,
             "branch": branch,
@@ -187,5 +186,5 @@ def handle_delete_events():
     SarthiHelper.delete_preview(
         GitHubHelper.get_project_url(),
         GitHubHelper.branch_name,
-        GitHubHelper.compose_file_location,
+        GitHubHelper.compose_file_location
     )
