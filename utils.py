@@ -107,11 +107,11 @@ class SarthiHelper:
         return hashlib.md5(GitHubHelper.repo_name.encode()).hexdigest()[:16]
 
     @staticmethod
-    def deploy_preview(project_git_url, branch, gh_token):
+    def deploy_preview(project_git_url, branch, compose_file_location, gh_token):
         body = {
             "project_git_url": project_git_url,
             "branch": branch,
-            "compose_file_location": GitHubHelper.compose_file_location,
+            "compose_file_location": compose_file_location,
             "gh_token": gh_token
         }
         try:
@@ -131,10 +131,12 @@ class SarthiHelper:
         return service_urls
 
     @staticmethod
-    def delete_preview(project_git_url, branch):
+    def delete_preview(project_git_url, branch, compose_file_location, gh_token):
         body = {
             "project_git_url": project_git_url,
             "branch": branch,
+            "compose_file_location": compose_file_location,
+            "gh_token": gh_token
         }
         response = requests.delete(
             url=f"{SarthiHelper._sarthi_server_url}/deploy",
@@ -150,6 +152,7 @@ def handle_push_events():
     SarthiHelper.deploy_preview(
         GitHubHelper.get_project_url(),
         GitHubHelper.branch_name,
+        GitHubHelper.compose_file_location,
         GitHubHelper.gh_repo_rw_token
     )
 
@@ -160,6 +163,7 @@ def handle_pr_events():
         services_url = SarthiHelper.deploy_preview(
             GitHubHelper.get_project_url(),
             GitHubHelper.branch_name,
+            GitHubHelper.compose_file_location,
             GitHubHelper.gh_repo_rw_token
         )
         GitHubHelper.comment_on_gh_pr(
@@ -170,6 +174,7 @@ def handle_pr_events():
         SarthiHelper.delete_preview(
             GitHubHelper.get_project_url(),
             GitHubHelper.branch_name,
+            GitHubHelper.compose_file_location,
         )
         GitHubHelper.comment_on_gh_pr(
             f"Deleted ephemeral / preview environment for {GitHubHelper.get_project_url()}/{GitHubHelper.branch_name}"
@@ -180,5 +185,7 @@ def handle_pr_events():
 
 def handle_delete_events():
     SarthiHelper.delete_preview(
-        GitHubHelper.get_project_url(), GitHubHelper.branch_name
+        GitHubHelper.get_project_url(),
+        GitHubHelper.branch_name,
+        GitHubHelper.compose_file_location,
     )
