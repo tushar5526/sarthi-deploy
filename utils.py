@@ -114,12 +114,17 @@ class SarthiHelper:
             "compose_file_location": GitHubHelper.compose_file_location,
             "gh_token": gh_token
         }
-        response = requests.post(
-            url=f"{SarthiHelper._sarthi_server_url}/deploy",
-            headers=SarthiHelper._get_headers(),
-            data=json.dumps(body),
-        )
-        response.raise_for_status()
+        try:
+            response = requests.post(
+                url=f"{SarthiHelper._sarthi_server_url}/deploy",
+                headers=SarthiHelper._get_headers(),
+                data=json.dumps(body),
+            )
+            response.raise_for_status()
+        except requests.RequestException as e:
+            print(f"Error deploying services", e)
+            raise e
+
         service_urls = response.json()
         print(f"Successfully deployed ✅ {project_git_url}/{branch}")
         print("\n".join(f"- {url}" for url in service_urls))
