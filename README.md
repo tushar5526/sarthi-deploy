@@ -37,6 +37,7 @@ jobs:
           compose_file: docker-compose.yml # override this with the compose file location in your project
           sarthi_server_url: ${{ secrets.SARTHI_SERVER_URL }} # Sarthi API Backend URL prompted after running the installation script
           sarthi_secret: ${{ secrets.SARTHI_SECRET }} # Secret text generated while setting up the server
+          gh_repo_rw_token: ${{ secrets.GH_REPO_RW_TOKEN }} # GitHub PAT token to allow cloning private repos. This is needed if you want to run Sarthi on private repos. 
 ```
 
 ### License 📄
